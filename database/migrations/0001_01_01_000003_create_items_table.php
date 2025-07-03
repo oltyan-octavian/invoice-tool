@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->float('price_without_tax');
-            $table->float('tax');
             $table->float('discount');
             $table->float('final_price');
             $table->timestamps();

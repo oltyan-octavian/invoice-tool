@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ItemResource\Pages;
-use App\Filament\Resources\ItemResource\RelationManagers;
 use App\Models\Item;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ItemResource extends Resource
 {
@@ -36,12 +33,6 @@ class ItemResource extends Resource
                     ->required()
                     ->numeric(),
 
-                Forms\Components\TextInput::make('tax')
-                    ->label('Tax (%):')
-                    ->required()
-                    ->integer()
-                    ->default(19),
-
                 Forms\Components\TextInput::make('discount')
                     ->label('Discount (%):')
                     ->required()
@@ -50,6 +41,7 @@ class ItemResource extends Resource
 
                 Forms\Components\TextInput::make('final_price')
                     ->prefix('€')
+                    ->disabled()
                     ->label('Final Price')
                     ->numeric()
                     ->readOnly()
@@ -62,11 +54,8 @@ class ItemResource extends Resource
                         ->icon('heroicon-o-calculator')
                         ->action(function (callable $get, callable $set) {
                             $price = floatval($get('price_without_tax') ?? 0);
-                            $tax = floatval($get('tax') ?? 0);
                             $discount = floatval($get('discount') ?? 0);
-
-                            $priceWithTax = $price + ($price * $tax / 100);
-                            $final = $priceWithTax * (1 - $discount / 100);
+                            $final = $price * (1 - $discount / 100);
 
                             $set('final_price', round($final, 2));
                         }),
@@ -86,13 +75,11 @@ class ItemResource extends Resource
                 Tables\Columns\TextColumn::make('price_without_tax')
                 ->label('Price (without tax)')
                 ->sortable(),
-                Tables\Columns\TextColumn::make('tax')
-                ->label('Tax (%)'),
                 Tables\Columns\TextColumn::make('discount')
                 ->label('Discount (%)')
                 ->sortable(),
                 Tables\Columns\TextColumn::make('final_price')
-                ->label('Final Price')
+                ->label('Final Price (without tax)')
                 ->sortable(),
                 Tables\Columns\TextColumn::make('updated_at')
                 ->label('Last updated')
