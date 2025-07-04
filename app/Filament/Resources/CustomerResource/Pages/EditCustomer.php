@@ -21,17 +21,7 @@ class EditCustomer extends EditRecord
     {
         if (! $data['is_legal_entity']) {
             $data['company_name'] = null;
-            $data['company_street'] = null;
-            $data['company_city'] = null;
-            $data['company_zip'] = null;
-            $data['company_country'] = null;
             $data['company_vat'] = null;
-        }
-        else{
-            $data['street'] = null;
-            $data['city'] = null;
-            $data['zip'] = null;
-            $data['country'] = null;
         }
 
         logger($data);

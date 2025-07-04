@@ -38,70 +38,26 @@ class CustomerResource extends Resource
                     ->live(),
 
                 Forms\Components\TextInput::make('street')
-                    ->requiredIf('is_legal_entity', false)
-                    ->dehydrated()
-                    ->nullable()
-                    ->default(null)
-                    ->visible(fn (callable $get) => $get('is_legal_entity') === false)
+                    ->label(fn ($get) => $get('is_legal_entity') ? 'Headquarters Street' : 'Street')
+                    ->required()
                     ->maxLength(255),
 
                 Forms\Components\TextInput::make('city')
-                    ->requiredIf('is_legal_entity', false)
-                    ->dehydrated()
-                    ->nullable()
-                    ->default(null)
-                    ->visible(fn (callable $get) => $get('is_legal_entity') === false)
+                    ->label(fn ($get) => $get('is_legal_entity') ? 'Headquarters City' : 'City')
+                    ->required()
                     ->maxLength(255),
 
                 Forms\Components\TextInput::make('zip')
-                    ->requiredIf('is_legal_entity', false)
-                    ->dehydrated()
-                    ->nullable()
-                    ->default(null)
-                    ->visible(fn (callable $get) => $get('is_legal_entity') === false)
+                    ->label(fn ($get) => $get('is_legal_entity') ? 'Headquarters ZIP Code' : 'ZIP Code')
+                    ->required()
                     ->maxLength(255),
 
                 Forms\Components\TextInput::make('country')
-                    ->requiredIf('is_legal_entity', false)
-                    ->dehydrated()
-                    ->nullable()
-                    ->default(null)
-                    ->visible(fn (callable $get) => $get('is_legal_entity') === false)
+                    ->label(fn ($get) => $get('is_legal_entity') ? 'Headquarters Country' : 'Country')
+                    ->required()
                     ->maxLength(255),
 
                 Forms\Components\TextInput::make('company_name')
-                    ->requiredIf('is_legal_entity', true)
-                    ->dehydrated()
-                    ->nullable()
-                    ->default(null)
-                    ->visible(fn (callable $get) => $get('is_legal_entity') === true)
-                    ->maxLength(255),
-
-                Forms\Components\TextInput::make('company_street')
-                    ->requiredIf('is_legal_entity', true)
-                    ->dehydrated()
-                    ->nullable()
-                    ->default(null)
-                    ->visible(fn (callable $get) => $get('is_legal_entity') === true)
-                    ->maxLength(255),
-
-                Forms\Components\TextInput::make('company_city')
-                    ->requiredIf('is_legal_entity', true)
-                    ->dehydrated()
-                    ->nullable()
-                    ->default(null)
-                    ->visible(fn (callable $get) => $get('is_legal_entity') === true)
-                    ->maxLength(255),
-
-                Forms\Components\TextInput::make('company_zip')
-                    ->requiredIf('is_legal_entity', true)
-                    ->dehydrated()
-                    ->nullable()
-                    ->default(null)
-                    ->visible(fn (callable $get) => $get('is_legal_entity') === true)
-                    ->maxLength(255),
-
-                Forms\Components\TextInput::make('company_country')
                     ->requiredIf('is_legal_entity', true)
                     ->dehydrated()
                     ->nullable()
@@ -172,34 +128,6 @@ class CustomerResource extends Resource
                 ->limit(255)
                 ->extraAttributes(['style' => 'width: 20rem'])
                 ->extraHeaderAttributes(['style' => 'width: 20rem']),
-
-                Tables\Columns\TextColumn::make('company_street')
-                ->searchable()
-                ->wrap()
-                ->limit(255)
-                ->extraAttributes(['style' => 'width: 20rem'])
-                ->extraHeaderAttributes(['style' => 'width: 20rem']),
-
-                Tables\Columns\TextColumn::make('company_city')
-                    ->searchable()
-                    ->wrap()
-                    ->limit(255)
-                    ->extraAttributes(['style' => 'width: 20rem'])
-                    ->extraHeaderAttributes(['style' => 'width: 20rem']),
-
-                Tables\Columns\TextColumn::make('company_zip')
-                    ->searchable()
-                    ->wrap()
-                    ->limit(255)
-                    ->extraAttributes(['style' => 'width: 20rem'])
-                    ->extraHeaderAttributes(['style' => 'width: 20rem']),
-
-                Tables\Columns\TextColumn::make('company_country')
-                    ->searchable()
-                    ->wrap()
-                    ->limit(255)
-                    ->extraAttributes(['style' => 'width: 20rem'])
-                    ->extraHeaderAttributes(['style' => 'width: 20rem']),
 
                 Tables\Columns\TextColumn::make('company_vat')
                 ->searchable()
