@@ -4,9 +4,21 @@
     <meta charset="UTF-8">
     <title>Invoice</title>
     <style>
+        @font-face {
+            font-family: 'source_sans_3';
+            src: url('{{ storage_path('fonts/source_sans_3/SourceSans3-Regular.ttf') }}') format('truetype');
+            font-weight: normal;
+        }
+
+        @font-face {
+            font-family: 'source_sans_3';
+            src: url('{{ storage_path('fonts/source_sans_3/SourceSans3-Bold.ttf') }}') format('truetype');
+            font-weight: bold;
+        }
         body {
-            font-family: Helvetica, Arial, sans-serif;
+            font-family: 'source_sans_3', sans-serif;
             padding-top: 0;
+            line-height: 1;
             padding-left: 20px;
             padding-right: 20px;
             padding-bottom: 20px;
