@@ -2,16 +2,12 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Pages\Page;
-
 use App\Models\Customer;
 use App\Models\Item;
-use Filament\Forms\Components\{DatePicker, Select, TextInput, Repeater};
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\InvoiceMailable;
+use App\Services\InvoiceService;
+use Filament\Forms\Components\{DatePicker, Select, TextInput, Repeater, Toggle};
 use Filament\Notifications\Notification;
-use Svg\Tag\Text;
+use Filament\Pages\Page;
 
 class CreateInvoice extends Page implements \Filament\Forms\Contracts\HasForms
 {
@@ -19,8 +15,8 @@ class CreateInvoice extends Page implements \Filament\Forms\Contracts\HasForms
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
     protected static string $view = 'filament.pages.create-invoice';
-    public string $language = 'en';
 
+    public string $language = 'en';
     public $customer_id;
     public $items = [];
     public $invoice_name;
@@ -93,33 +89,8 @@ class CreateInvoice extends Page implements \Filament\Forms\Contracts\HasForms
         $data = $this->form->getState();
         app()->setLocale($this->language);
 
-        $customer = Customer::find($data['customer_id']);
-        logger($customer);
-        $items = collect($data['items'])->map(function ($item) {
-            $model = Item::find($item['item_id']);
-            return [
-                'name' => $model->name,
-                'price' => $model->final_price,
-                'unit_type' => $item['unit_type'],
-                'quantity' => $item['quantity'],
-                'total' => $model->final_price * $item['quantity'],
-            ];
-        });
-
-        $name = $data['invoice_name'];
-        $due_date = $data['due_date'];
-        $tax = (float) $data['tax'];
-
-        $total = $items->sum('total');
-
-        $pdf = Pdf::loadView('pdfs.invoice', [
-            'customer' => $customer,
-            'items' => $items,
-            'total' => $total,
-            'name' => $name,
-            'due_date' => $due_date,
-            'tax' => $tax,
-        ]);
+        $invoice = $this->saveInvoiceToDatabase($data);
+        $pdf = app(InvoiceService::class)->generatePdf($invoice);
 
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->stream();
@@ -131,28 +102,46 @@ class CreateInvoice extends Page implements \Filament\Forms\Contracts\HasForms
         $data = $this->form->getState();
         app()->setLocale($this->language);
 
-        $customer = Customer::find($data['customer_id']);
-        $items = collect($data['items'])->map(function ($item) {
-            $model = Item::find($item['item_id']);
-            return [
-                'name' => $model->name,
-                'price' => $model->final_price,
-                'unit_type' => $item['unit_type'],
-                'quantity' => $item['quantity'],
-                'total' => $model->final_price * $item['quantity'],
-            ];
-        });
-
-        $name = $data['invoice_name'];
-        $due_date = $data['due_date'];
-        $tax = (float) $data['tax'];
-
-        $total = $items->sum('total');
-
-        Mail::to($customer->email)->send(new InvoiceMailable($customer, $items, $total, $name, $due_date, $tax));
+        $invoice = $this->saveInvoiceToDatabase($data);
+        app(InvoiceService::class)->sendInvoiceEmail($invoice);
 
         Notification::make()
             ->title('Invoice emailed successfully!')
+            ->success()
+            ->send();
+    }
+
+    private function saveInvoiceToDatabase(array $data)
+    {
+        $invoice = \App\Models\Invoice::create([
+            'customer_id' => $data['customer_id'],
+            'name' => $data['invoice_name'],
+            'language' => $data['language'],
+            'due_date' => $data['due_date'],
+            'tax' => $data['tax'],
+            'is_paid' => false,
+        ]);
+
+        foreach ($data['items'] as $item) {
+            $invoice->items()->create([
+                'item_id' => $item['item_id'],
+                'unit_type' => $item['unit_type'],
+                'quantity' => $item['quantity'],
+            ]);
+        }
+
+        return $invoice;
+    }
+
+    public function saveInvoiceWrapper()
+    {
+        $data = $this->form->getState();
+        app()->setLocale($this->language);
+
+        $this->saveInvoiceToDatabase($data);
+
+        Notification::make()
+            ->title('Invoice saved successfully!')
             ->success()
             ->send();
     }
