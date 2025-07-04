@@ -8,6 +8,7 @@ use App\Services\InvoiceService;
 use Filament\Forms\Components\{DatePicker, Select, TextInput, Repeater, Toggle};
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Auth;
 
 class CreateInvoice extends Page implements \Filament\Forms\Contracts\HasForms
 {
@@ -46,7 +47,12 @@ class CreateInvoice extends Page implements \Filament\Forms\Contracts\HasForms
             Select::make('customer_id')
                 ->label('Select Customer')
                 ->required()
-                ->options(Customer::all()->pluck('name', 'id')),
+                ->options(function () {
+                    return \App\Models\Customer::query()
+                        ->where('user_id', Auth::id())
+                        ->pluck('name', 'id');
+                }),
+
 
             TextInput::make('invoice_name')
                 ->label('Invoice name')
@@ -57,8 +63,13 @@ class CreateInvoice extends Page implements \Filament\Forms\Contracts\HasForms
                 ->schema([
                     Select::make('item_id')
                         ->label('Item')
-                        ->options(Item::all()->pluck('name', 'id'))
+                        ->options(function () {
+                            return \App\Models\Item::query()
+                                ->where('user_id', Auth::id())
+                                ->pluck('name', 'id');
+                        })
                         ->required(),
+
 
                     TextInput::make('unit_type')
                         ->label('Unit type')
@@ -120,6 +131,7 @@ class CreateInvoice extends Page implements \Filament\Forms\Contracts\HasForms
             'due_date' => $data['due_date'],
             'tax' => $data['tax'],
             'is_paid' => false,
+            'user_id' => Auth::id(),
         ]);
 
         foreach ($data['items'] as $item) {

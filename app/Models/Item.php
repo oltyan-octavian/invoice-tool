@@ -10,7 +10,8 @@ class Item extends Model
         'name',
         'price_without_tax',
         'discount',
-        'final_price'
+        'final_price',
+        'user_id'
     ];
 
     protected static function booted()
@@ -25,6 +26,10 @@ class Item extends Model
         });
     }
 
+    public function user()
+    {
+        return $this->belongsTo(\App\Models\User::class);
+    }
 
 
 

@@ -13,8 +13,10 @@ use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\{Repeater, TextInput, Select, DatePicker, Toggle};
 use Filament\Tables\Columns\TextColumn;
+
 
 class InvoiceResource extends Resource
 {
@@ -99,5 +101,16 @@ class InvoiceResource extends Resource
             'index' => Pages\ListInvoices::route('/'),
             'edit' => Pages\EditInvoice::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        if (auth()->user()->role !== 'admin') {
+            $query->where('user_id', auth()->id());
+        }
+
+        return $query;
     }
 }

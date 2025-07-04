@@ -14,6 +14,7 @@ class Invoice extends Model
         'due_date',
         'tax',
         'is_paid',
+        'user_id',
     ];
 
     public function items()
@@ -25,4 +26,10 @@ class Invoice extends Model
     {
         return $this->belongsTo(Customer::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(\App\Models\User::class);
+    }
+
 }

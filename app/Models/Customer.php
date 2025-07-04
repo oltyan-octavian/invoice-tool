@@ -17,6 +17,13 @@ class Customer extends Model
         'is_legal_entity',
         'company_name',
         'company_vat',
+        'user_id',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(\App\Models\User::class);
+    }
+
 
 }
