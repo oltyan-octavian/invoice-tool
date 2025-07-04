@@ -84,9 +84,9 @@
 <div>
     @if($customer->is_legal_entity)
         <div><strong>{{ $customer->company_name }}</strong> </div>
-        <div><strong>{{ $customer->company_street }}</strong> </div>
-        <div><strong>{{ $customer->company_zip }} {{ $customer->company_city }}</strong> </div>
-        <div><strong>{{ $customer->company_country }}</strong> </div>
+        <div><strong>{{ $customer->street }}</strong> </div>
+        <div><strong>{{ $customer->zip }} {{ $customer->city }}</strong> </div>
+        <div><strong>{{ $customer->country }}</strong> </div>
     @else
         <div><strong>{{ $customer->name }}</strong> </div>
         <div><strong>{{ $customer->street }}</strong> </div>

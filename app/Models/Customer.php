@@ -16,10 +16,6 @@ class Customer extends Model
         'phone_number',
         'is_legal_entity',
         'company_name',
-        'company_street',
-        'company_city',
-        'company_zip',
-        'company_country',
         'company_vat',
     ];
 
