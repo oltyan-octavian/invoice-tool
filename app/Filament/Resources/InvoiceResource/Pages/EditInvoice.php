@@ -7,7 +7,6 @@ use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use App\Services\InvoiceService;
-use Filament\Pages\Actions\Action;
 
 class EditInvoice extends EditRecord
 {
@@ -16,7 +15,7 @@ class EditInvoice extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('Generate PDF')
+            Actions\Action::make('Generate PDF')
                 ->action(function () {
                     $this->save();
 
@@ -27,7 +26,7 @@ class EditInvoice extends EditRecord
                     }, 'invoice.pdf');
                 }),
 
-            Action::make('Send Email')
+            Actions\Action::make('Send Email')
                 ->requiresConfirmation()
                 ->action(function () {
                     $this->save();

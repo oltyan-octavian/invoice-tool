@@ -36,11 +36,6 @@ class InvoiceResource extends Resource
 
             TextInput::make('name')->label('Invoice Name')->required(),
 
-            Select::make('language')->options([
-                'en' => 'English',
-                'ro' => 'Romanian',
-            ])->required(),
-
             DatePicker::make('due_date')->required(),
 
             TextInput::make('tax')->numeric()->required(),
